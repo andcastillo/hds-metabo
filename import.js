@@ -23,7 +23,7 @@ function onError(e) {
 }
 
 function startImport() {
-
+/*
     var experiment = Entry.create('experiment', {
         id: 'abc123'
     }, {
@@ -65,5 +65,5 @@ function startImport() {
             });
 
     }
-
+*/
 }
