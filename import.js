@@ -23,47 +23,46 @@ function onError(e) {
 }
 
 function startImport() {
-/*
-    var experiment = Entry.create('experiment', {
-        id: 'abc123'
+    //console.log("Done");
+    //process.exit(0);
+
+    var experiment = Entry.create('project', {
+        //id: new Types.ObjectId()
     }, {
-        owner: 'test@cheminfo.org'
+        owner: 'metabo@cheminfo.org'
     });
-	
-	experiment.name = 'myExperiment';
+	experiment.name = 'diagnosisX';
+    experiment.description = "This project aims to detect the X condition in elder people.";
+    experiment.keywords = ["X", "South Murica", "elder", "illness"];
 
-    experiment.save().then(saveNmr);
+    experiment.save().then(createStudyShema);
 
-    function saveNmr() {
+    function createStudyShema() {
 
-        var file1 = './data/nmr1.jdx';
-        var nmr1 = experiment.createChild('nmr', {
-            solv: 'Ethanol',
-            freq: 400,
-            jcamp: {
-                value: fs.readFileSync(file1),
-                filename: 'nmr1.jdx'
-            }
-        });
-
-        var file2 = './data/nmr2.jdx';
-        var nmr2 = experiment.createChild('nmr', {
-            solv: 'Ethanol',
-            freq: 400,
-            jcamp: {
-                value: fs.readFileSync(file2),
-                filename: 'nmr2.jdx'
-            }
-        });
-		
-		var saveChildren = [nmr1.save(), nmr2.save()];
-
-        Promise.all(saveChildren)
-            .then(function () {
-                console.log('Everything saved');
-                process.exit(0);
+        //Create the subject to study
+        var nEntities = 3;
+        var nSamples = 3;
+        //var promisesSchema = [];
+        for(var i=0;i<nEntities;i++){
+            //We don't know yet the persons.
+            var entity = experiment.createChild('entity',{
+                kind:"person"
+            }).save().then(function(entity){
+                console.log("entity created");
+                for(var j=0;j<nSamples;j++){
+                    console.log("Creating sample "+j);
+                    var sample = entity.createChild('sample',{
+                        kind:"blood"
+                    }).save().then(function () {
+                        console.log('Everything saved');
+                    });
+                }
             });
+        };
+
+        function createSample(){
+
+        }
 
     }
-*/
 }
