@@ -24,6 +24,10 @@ var person2 = {identification:{typeI:"ti",value:"2222222"},
     race:"gray"
 };
 
+var blood0 = {info:"Loved blood"};
+var blood1 = {info:"Cold blood"};
+var blood2 = {info:"Running blood"};
+
 // Load kinds
 require('./kinds');
 
@@ -42,8 +46,6 @@ function search() {
         }
 
     }).then(function (children) {
-        console.log(children.length);
-        console.log(children[0].createChild);
         var saved = new Array(children.length);
         saved[0]=children[0].createChild('person',person0).save();
         saved[1]=children[1].createChild('person',person1).save();
