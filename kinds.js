@@ -24,7 +24,7 @@ Kind.create('diagnosis', {
 });
 
 Kind.create('person', {
-    identification: {type:String, value: String},
+    identification: {typeI: String, value: String},
     name: {first:String,last:String},
     age: { type: Number, min: 18, max: 65 },
     gender: String,

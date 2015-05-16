@@ -59,10 +59,6 @@ function startImport() {
                 }
             });
         };
-
-        function createSample(){
-
-        }
-
+        //process.exit(0);
     }
 }
