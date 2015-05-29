@@ -33,7 +33,7 @@ Kind.create('clinic', {
     info: String
 }
 
-var jcamp = new Kind.File({
+gvar jcamp = new Kind.File({
     filename: 'nmr.jdx',
     mimetype: 'chemical/x-jcamp-dx'
 });
@@ -41,7 +41,7 @@ var jcamp = new Kind.File({
 Kind.create('nmr', {
     solv: String,
     temp: Number,
-    jcamp: jcamp,
+    jcamp: [{processing: String, jcamp: String}],
     nucleus: [ String ],
     freq: [ Number ]
 });
@@ -58,17 +58,4 @@ Kind.create('ms', {
     solv: String,
     temp: Number,
     jcamp: jcamp
-});
-
-Kind.create('blood',{
-    date: { type: Date, default: Date.now },
-    info: String,
-    lala: { type: Number, ref: 'ms'},
-    fafa: [ ms ]
-});
-
-Kind.create('diagnosis', {
-    date: { type: Date, default: Date.now },
-    active: { type:Boolean, default:false },
-    description: String
 });

@@ -35,7 +35,7 @@ function startImport() {
     TBMN.name = 'TBMN Urines MTBX';
     TBMN.description = "Demo project, dataset from kidney disease patient cohort provided by the Group of Computational and Systems Medicine, Imperial College, London";
     TBMN.keywords = ["Kidney disease", "NMR", "Demo"];
-    
+    s
     TBMN.save().then(createData);
 });
 
@@ -53,23 +53,70 @@ function createData() {
 	    BMI: data[i][7]
         }).save().then(function(patient){
             console.log("patient created");
-	    for (var j=...){
-		//create clinic children for diseases
-	    }
-            for(var j=0;j<nSamples;j++){
-                console.log("Creating sample "+j);
-                var sample = patient.createChild('sample',{
-                    kind:"Urine"
-                }).save().then(function (sample) {
-		    var nmr1d = sample.createChild('nmr',{
-			jcamp: path + data[i][1] + "0";
-		    }).save();
-		    var nmr2d = sample.createChild('nmr',{
-			jcamp: path + data[i][1] + "1";
-		    }).save();
-		});
-		
-            }
+	    //create clinic children for diseases
+	    createDiseases();
+	    //create nmr objects
+	    createSpectra();
 	});
     }
 }
+
+function createDiseases(){
+    console.log("generating clinic history");
+    for (var j=8; j<=12;j++){
+	if(typeOf(data[i][j]) == "string"){
+	    if (parseInt(data[i][j].substring(0,1)) == 1){
+		patient.createChild('clinic', {
+		    name: data[i][0],
+		    info: data[i][j].substring(1,data[i][j].length)
+		}).save();
+	    }
+	}
+	else{
+	    if(data[i][j] == 1){
+		patient.createChild('clinic', {
+		    name: data[i][0],
+		}).save();
+	    }
+	}
+    }
+    for (var j=13; j<=15; j++){
+	patient.createChild('clinic' {
+	    name: data[i][j]
+	}).save();
+    }
+    console.log("clinic history saved");
+}
+
+function createSpectra(){
+    console.log("generating sample");
+    var sample = patient.createChild('sample',{
+        kind:"Urine"
+    }).save().then(function (sample) {
+	console.log("sample saved");
+	console.log("generating NMR spectra");
+	var nmr1d = sample.createChild('nmr',{
+	    jcamp: [
+		{
+		    processing: "lowres",
+		    jcamp: path // in the original bruker files corresponds to the directory data[i][1] + "0"
+		},
+		{
+		    processing: "highres",
+		    jcamp: path // in the original bruker files corresponds to the directory data[i][1] + "0"
+		}]}).save();
+	var jres = sample.createChild('nmr',{
+	    jcamp: [
+		{
+		    processing: "lowres",
+		    jcamp: path // in the original bruker files corresponds to the directory data[i][1] + "1"
+		},
+		{
+		    processing: "highres",
+		    jcamp: path // in the original bruker files corresponds to the directory data[i][1] + "1"
+		}]}).save();
+		
+	}).save();
+    console.log("spectra saved");
+}
+
