@@ -29,7 +29,7 @@ var blood1 = {info:"Cold blood"};
 var blood2 = {info:"Running blood"};
 
 // Load kinds
-require('./../kinds');
+require('./../kinds_old');
 
 hds.init({
     database: require('./../mongo.json')
