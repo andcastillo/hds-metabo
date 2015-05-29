@@ -5,10 +5,10 @@ var hds = require('hds');
 var Entry = hds.Entry;
 
 // Load kinds
-require('./kinds');
+require('./../kinds');
 
 var connection = hds.init({
-    database: require('./mongo.json')
+    database: require('./../mongo.json')
 });
 
 connection.then(onSuccess, onError);
@@ -31,9 +31,9 @@ function startImport() {
     }, {
         owner: 'metabo@cheminfo.org'
     });
-	experiment.name = 'diagnosisX';
-    experiment.description = "This project aims to detect the X condition in elder people.";
-    experiment.keywords = ["X", "South Murica", "elder", "illness"];
+	experiment.name = 'diagnosisY';
+    experiment.description = "This project aims to detect the Y condition in elder people.";
+    experiment.keywords = ["Y", "South Murica", "elder", "illness"];
 
     experiment.save().then(createStudyShema);
 

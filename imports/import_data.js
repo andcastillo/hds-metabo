@@ -29,16 +29,16 @@ var blood1 = {info:"Cold blood"};
 var blood2 = {info:"Running blood"};
 
 // Load kinds
-require('./kinds');
+require('./../kinds');
 
 hds.init({
-    database: require('./mongo.json')
+    database: require('./../mongo.json')
 }).then(search);
 
 function search() {
 
     Entry.findOne('project', {
-        name: 'diagnosisX'
+        name: 'diagnosisY'
     }).exec().then(function (exp) {
 
         if (exp) {

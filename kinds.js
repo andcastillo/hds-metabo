@@ -36,7 +36,7 @@ var jcamp = new Kind.File({
     mimetype: 'chemical/x-jcamp-dx'
 });
 
-Kind.create('nmr', {
+var nmr = Kind.create('nmr', {
     solv: String,
     temp: Number,
     jcamp: jcamp,
@@ -44,7 +44,7 @@ Kind.create('nmr', {
     freq: [ Number ]
 });
 
-Kind.create('ms', {
+var ms = Kind.create('ms', {
     solv: String,
     temp: Number,
     jcamp: jcamp
@@ -52,5 +52,8 @@ Kind.create('ms', {
 
 Kind.create('blood',{
     date: { type: Date, default: Date.now },
-    info: String
+    info: String,
+    ms:{ type: Number, ref: 'ms' },
+    h1:{ type: Number, ref: 'nmr' },
+    cosy:{ type: Number, ref: 'nmr' }
 });
