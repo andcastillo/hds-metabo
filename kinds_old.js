@@ -3,7 +3,6 @@
 var hds = require('hds');
 var Kind = hds.Kind;
 var Schema = hds.Schema;
-
 Kind.create('project', {
     name: String,
     description: String,
@@ -11,33 +10,25 @@ Kind.create('project', {
 });
 
 Kind.create('entity', {
-    kindX: String
+	kind: String
 });
 
 Kind.create('sample', {
-    kindX: String
+    kind: String
 });
 
-Kind.create('urine', {
-    info: String,
-    date: Date
+Kind.create('diagnosis', {
+    date: { type: Date, default: Date.now },
+    active: { type:Boolean, default:false },
+    description: String
 });
 
-Kind.create('patient', {
+Kind.create('person', {
     identification: {typeI: String, value: String},
     name: {first:String,last:String},
-    age: Number,
+    age: { type: Number, min: 18, max: 65 },
     gender: String,
-    race: String,
-    weight: Number,
-    height: Number,
-    BMI: Number
-})
-
-Kind.create('clinic', {
-    name: String,
-    value: Number,
-    info: String
+    race: String
 });
 
 var jcamp = new Kind.File({
@@ -45,19 +36,24 @@ var jcamp = new Kind.File({
     mimetype: 'chemical/x-jcamp-dx'
 });
 
-Kind.create('nmr', {
-    experiment: String,
-    name: String,
+var nmr = Kind.create('nmr', {
     solv: String,
     temp: Number,
-    jcamp: [{processing: String, jcamp: {type:Number,ref:"jcamp"}}],
+    jcamp: jcamp,
     nucleus: [ String ],
     freq: [ Number ]
 });
 
-/*******Not used*********/
-/*Kind.create('ms', {
+var ms = Kind.create('ms', {
     solv: String,
     temp: Number,
     jcamp: jcamp
-});*/
+});
+
+Kind.create('blood',{
+    date: { type: Date, default: Date.now },
+    info: String,
+    ms:{ type: Number, ref: 'ms' },
+    h1:{ type: Number, ref: 'nmr' },
+    cosy:{ type: Number, ref: 'nmr' }
+});

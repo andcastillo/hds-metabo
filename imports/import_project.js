@@ -5,7 +5,7 @@ var hds = require('hds');
 var Entry = hds.Entry;
 
 // Load kinds
-require('./../kinds');
+require('./../kinds_old');
 
 var connection = hds.init({
     database: require('./../mongo.json')
