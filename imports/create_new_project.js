@@ -33,7 +33,8 @@ function startImport() {
     TBMN.description = "Demo project, dataset from kidney disease patient cohort provided by the Group of Computational and Systems Medicine, Imperial College, London";
     TBMN.keywords = ["Kidney disease", "NMR", "Demo"];
     TBMN.save().then(function() {
-        console.log("Project created");
+        console.log("Project created ");
+        console.log(TBMN);
         process.exit(0);
     });
     /*
