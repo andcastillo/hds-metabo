@@ -26,44 +26,55 @@ fs.createReadStream('../data/data.csv').pipe(parser);
 function onSuccess(data) {
 
     Entry.findOne('project', {
-        _id: "556f6ae067b0a7c40d9ffa09"
+        _id: "556f8110798287ed0fad7b53"
     }).exec().then(function (TBMN) {
         if (TBMN) {
             //Create the subject to study
-            var nPatients = 10;//data.length - 1; //field 0 of data is header
+            var nPatients = 2;//data.length - 1; //field 0 of data is header
             var nSamples = 1;
             var header = data[0];
-            var promises = [];
-            var nPromises = nPatients*nSamples;
+            var promises = new Array(nPatients);
+            var nPromises = nPatients * nSamples;
+
             for (var i = 1; i <= nPatients; i++) { //1 indexed because field 0 of data is header
                 var row = data[i];
-                var patient = TBMN.createChild('patient', {
-                    gender:row[3],
+                promises[i - 1] = TBMN.createChild('patient', {
+                    gender: row[3],
                     age: row[4],
                     weight: row[5],
                     height: row[6],
                     BMI: row[7]
-                }).save().then(function (patient) {
-                    console.log("patient created");
-                    //create clinic children for diseases
-                    createDiseases(patient, header, row).then(function(){
-                        nPromises--;
-                        console.log(nPromises);
-                        if(nPromises == 0){
-                            console.log("Ok");
-                            process.exit(0);
-                        }
-                    });
-                    //create nmr objects
-                    //createSpectra(patient,row);
-                });
+                }).save();//.then(console.log("Ok"));
             }
 
-            //console.log(TBMN);
-            //process.exit(0);
-            //return exp.getChildren({kind: 'entity'});
-        }
+            //console.log(promises);
+            Promise.all(promises).then(function (patients) {
+                for (var i = 1; i <= nPatients; i++) {
+                    createDiseases(patients[i], header, data[i]).then(console.log("Ok"));
+                }
+                process.exit(0);
+            });
 
+            /*
+             .then(function (patient) {
+             console.log("patient created");
+             //create clinic children for diseases
+             createDiseases(patient, header, row).then(function(){
+             nPromises--;
+             console.log(nPromises);
+             if(nPromises == 0){
+             console.log("Ok");
+             process.exit(0);
+             }
+             });
+             //create nmr objects
+             //createSpectra(patient,row);
+             });
+             //console.log(TBMN);
+             //process.exit(0);
+             //return exp.getChildren({kind: 'entity'});
+             }*/
+        }
     })
 }
 
@@ -73,10 +84,9 @@ function onError(){
 
 function createDiseases(patient, header, row) {
     console.log("generating clinic history");
+    console.log(row);
     var diagnosis = [];
     var treatments = [];
-
-    console.log(row);
     //Columns 8 to 12: Diabetes,	HT,	Hyperlipidemia,	IHD,	Smoking,
     for (var j = 8; j <= 12; j++) {
 
@@ -109,6 +119,7 @@ function createDiseases(patient, header, row) {
         treatments = row[16].split(",");
     }
 
+
     //Define the period
     var period = {from: new Date("01/01/2013"), to: new Date("01/06/2013")};
     var controls = [];
@@ -123,7 +134,8 @@ function createDiseases(patient, header, row) {
             if(row[j] && typeof row[j] ==="string" )
                 control.stringValue = row[j];
         }
-        constrols.push(control);
+
+        controls.push(control);
     }
     console.log("clinic history created");
     return patient.createChild('clinic',{diagnosis:diagnosis,controls:controls,treatments:treatments}).save();
