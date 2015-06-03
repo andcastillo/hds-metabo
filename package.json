@@ -20,6 +20,8 @@
   "dependencies": {
     "bluebird": "^2.9.14",
     "hds": "^0.6.1",
-    "netcdf":"1.1.1"
+    "netcdf":"1.1.1",
+    "stream-transform":"0.0.8",
+    "csv":"0.4.2"
   }
 }
