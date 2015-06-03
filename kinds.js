@@ -35,9 +35,9 @@ Kind.create('patient', {
 })
 
 Kind.create('clinic', {
-    name: String,
-    value: Number,
-    info: String
+    diagnosis: [{name:String, procedure: [String], comments:String}],
+    controls: [{name:String, period: {from: Date, to: Date}, numericValue: Number, stringValue: String}],
+    treatments:[String]
 });
 
 var jcamp = new Kind.File({
