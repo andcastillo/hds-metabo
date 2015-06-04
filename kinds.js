@@ -46,11 +46,11 @@ var jcamp = new Kind.File({
 });
 
 Kind.create('nmr', {
+    spectra: [{procesing: String, jcamp:jcamp}],
     experiment: String,
     name: String,
     solv: String,
     temp: Number,
-    jcamp: [{processing: String, jcamp: {type:Number,ref:"jcamp"}}],
     nucleus: [ String ],
     freq: [ Number ]
 });
