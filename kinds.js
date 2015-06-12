@@ -46,7 +46,8 @@ var jcamp = new Kind.File({
 });
 
 Kind.create('nmr', {
-    spectra: [{procesing: String, jcamp:jcamp}],
+    spectrum: jcamp,
+    zpectrum: jcamp,
     experiment: String,
     name: String,
     solv: String,

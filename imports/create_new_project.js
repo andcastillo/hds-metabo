@@ -37,32 +37,4 @@ function startImport() {
         console.log(TBMN);
         process.exit(0);
     });
-    /*
-        //Create the subject to study
-        var nEntities = 3;
-        var nSamples = 3;
-        var promisesSchema = new Array(nEntities);
-        for(var i=0;i<nEntities;i++){
-            //We don't know yet the persons.
-            promisesSchema[i] = TBMN.createChild('entity',{
-                kindX:"patient"
-            }).save();
-            console.log("Ok")
-        };
-
-        var promises = new Array(nEntities*nSamples);
-        Promise.all(promisesSchema).then(function(entities){
-            var index = 0;
-            for(var i=0;i<entities.length;i++){
-                for(var j=0;j<nSamples;j++){
-                    promises[index++] = entities[i].createChild('sample',{
-                        kindX:"urine"
-                    }).save();
-                }
-            }
-        });
-        Promise.all(promises).then(function(){
-            process.exit(0);
-        });
-    });*/
 }

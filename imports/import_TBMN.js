@@ -27,38 +27,56 @@ var spectraPath = "/usr/local/script/data/test\@patiny.com/Research/Metabo/data/
 function onSuccess(data) {
 
     Entry.findOne('project', {
-        _id: "5570d9f8dbbe3c022ee1da99"
+        _id: "557b4fd67262880f6cdec20b"
     }).exec().then(function (TBMN) {
         if (TBMN) {
+            //console.log(data.length);
             //Create the subject to study
-            var nPatients = 2;//data.length - 1; //field 0 of data is header
-            var nSamples = 1;
+            var from = data.length/2;
+            var to = data.length;//data.length;
+            var nPatients = to-from;
             var header = data[0];
             var promises = new Array(nPatients);
-
-            for (var i = 1; i <= nPatients; i++) { //1 indexed because field 0 of data is header
-                var row = data[i];
-                promises[i - 1] = TBMN.createChild('patient', {
-                    gender: row[3],
-                    age: row[4],
-                    weight: row[5],
-                    height: row[6],
-                    BMI: row[7]
-                }).save();//.then(console.log("Ok"));
+            var index = 0;
+            try{
+                for (var i = from; i < to; i++) { //1 indexed because field 0 of data is header
+                    var row = data[i];
+                    //console.log(i+ " - "+row[3]+" "+row[4]+" "+row[5]+" "+row[6]+" "+row[7]);
+                    promises[index++] = TBMN.createChild('patient', {
+                        gender: row[3],
+                        age: parseInt(row[4])||0,
+                        weight: parseInt(row[5])||0,
+                        height: parseInt(row[6])||0,
+                        BMI: parseInt(row[7])||0
+                    }).save();//.then(console.log("Ok"));*/
+                }
+            }
+            catch(e){
+                console.log(e);
             }
 
             //console.log(promises);
             Promise.all(promises).then(function (patients) {
                 console.log("Patients created");
                 var infos = [];
-                for (var j = 1; j <= nPatients; j++) {
-                    infos.push(createDiseases(patients[j-1], header, data[j]));
-                    infos.push(createSpectra(patients[j-1], data[j]));
+                index = 0;
+                for (var j = from; j < to; j++) {
+                    infos.push(createDiseases(patients[index], header, data[j]));
+                    infos.push(createSample(patients[index], data[j]));
+                    index++;
                 }
 
                 Promise.all(infos).then(function (stack) {
-                    console.log("Everything done "+stack.length);
-                    process.exit(0);
+                    var morePromises = [];
+                    index = 1;
+                    for (var k = from; k < to; k++) {
+                        createSpectra(stack[index],data[k],morePromises);
+                        index+=2;
+                    }
+                    Promise.all(morePromises).then(function(oo){
+                        console.log("Process finished!!!");
+                        process.exit(0);
+                    });
                 });
             });
         }
@@ -126,67 +144,46 @@ function createDiseases(patient, header, row) {
     return patient.createChild('clinic',{diagnosis:diagnosis,controls:controls,treatments:treatments}).save();
 }
 
-function createSpectra(patient, row) {
+function createSample(patient) {
     //console.log("generating sample");
-    return  patient.createChild('urine', {
+    return patient.createChild('urine', {
         info: "",
         date:new Date("01/01/2013")
-    }).save().then(function (sample) {
-        console.log(sample);
-        sample.createChild("niggg", {
-            fdfd: "sss"
-            /*experiment: "1H",
-            name: "pdata/1",
-            solv: "Urine",
-            nucleus: [ "1H" ],
-            freq: [ 600.59 ],
-            temp:10,
-            jcamp:  {
-                value: fs.readFileSync("./nmr1.jdx"),//fs.readFileSync(spectraPath+row[1]+"0/pdata/1/zpectrum.jdx"),
-                filename: "ok.jdx"//"h1_"+row[1]+".jdx"
-            }
-            /*spectrum: [
-                {
-                    processing: "lowres",
-                    jcamp: {
-                        value: fs.readFileSync("../data/fs_read.csv"),//fs.readFileSync(spectraPath+row[1]+"0/pdata/1/zpectrum.jdx"),
-                        filename: "h1_"+row[1]+".jdx"
-                    }
-                },
-                {
-                    processing: "highres",
-                    jcamp: {
-                        value: fs.readFileSync("../data/fs_read.csv"),//fs.readFileSync(spectraPath+row[1]+"0/pdata/1/spectrum.jdx"),
-                        filename: "zh1_"+row[1]+".jdx"
-                    }
-                }]*/
-        }).save().then(function(){
-            console.log("sssss");
-        });
-    /*
-        sample.createChild('nmr', {
-            experiment: "JRES",
-            name: "pdata/1",
-            solv: "Urine",
-            nucleus: [ "1H" ],
-            freq: [ 600.59 ],
-            spectrum: [
-                {
-                    processing: "lowres",
-                    jcamp: {
-                        value: fs.readFileSync("../data/fs_read.csv"),//fs.readFileSync(spectraPath+row[1]+"1/pdata/1/zpectrum.jdx"),
-                        filename: "jres_"+row[1]+".jdx"
-                    }
-                },
-                {
-                    processing: "highres",
-                    jcamp: {
-                        value: fs.readFileSync("../data/fs_read.csv"),//fs.readFileSync(spectraPath+row[1]+"1/pdata/1/spectrum.jdx"),
-                        filename: "zjres_"+row[1]+".jdx"
-                    }
-                }]
-        }).save().then(function(ok){
-            console.log("gggg");
-        });*/
-    });
+    }).save();
 }
+
+function createSpectra(sample, row, stack) {
+    //console.log("generating sample");
+    stack.push(sample.createChild("nmr", {
+        experiment: "1H",
+        name: "pdata/1",
+        solv: "Urine",
+        nucleus: [ "1H" ],
+        freq: [ 600.59 ],
+        zpectrum : {
+                    value: fs.readFileSync(spectraPath+row[1]+"0/pdata/1/zpectrum.jdx"),
+                    filename: "h1_"+row[1]+".jdx"
+                },
+        spectrum: {
+                    value: fs.readFileSync(spectraPath+row[1]+"0/pdata/1/spectrum.jdx"),
+                    filename: "zh1_"+row[1]+".jdx"
+                }
+    }).save());
+
+    stack.push(sample.createChild('nmr', {
+        experiment: "JRES",
+        name: "pdata/1",
+        solv: "Urine",
+        nucleus: [ "1H" ],
+        freq: [ 600.59 ],
+        spectrum:  {
+                    value: fs.readFileSync(spectraPath+row[1]+"1/pdata/1/zpectrum.jdx"),
+                    filename: "jres_"+row[1]+".jdx"
+                },
+        zpectrum:{
+                    value: fs.readFileSync(spectraPath+row[1]+"1/pdata/1/spectrum.jdx"),
+                    filename: "zjres_"+row[1]+".jdx"
+                }
+    }).save());
+}
+
